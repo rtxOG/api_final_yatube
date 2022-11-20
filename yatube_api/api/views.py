@@ -8,7 +8,7 @@ from rest_framework import mixins
 from posts.models import Post, Group, Follow
 from .serializers import PostSerializer, GroupSerializer
 from .serializers import CommentSerializer, FollowSerializer
-from .permissions import AuthorOrReadOnly
+from .permissions import IsAuthenticatedOrReadOnly
 
 
 class ListCreateViewSet(
@@ -23,7 +23,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = LimitOffsetPagination
-    permission_classes = (AuthorOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -36,7 +36,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (AuthorOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         post_id = self.kwargs.get('post_id')
